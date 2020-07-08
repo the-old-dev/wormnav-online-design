@@ -1,0 +1,47 @@
+@startuml 
+
+title Wormnav Extension - High Level Design
+
+skinparam style strictuml
+
+actor User
+
+box "Modified App" #LightSalmon
+control WatchApp
+end box
+
+box "New Components" #LightGreen
+control TransformServer
+database Configuration
+end box
+
+entity GpxSourceSite
+
+== User Configuration ==
+
+User -> TransformServer : open url
+activate TransformServer
+TransformServer -> User : show all configured id - gpx-url pairs
+deactivate TransformServer
+
+User -> TransformServer : add gpx-url with id
+activate TransformServer
+TransformServer -> Configuration : save [id, gpx-url]
+TransformServer -> User : show all configured id - gpx-url pairs
+deactivate TransformServer
+
+== Usage by smartwatch ==
+User -> WatchApp : input gpx-url-id
+activate WatchApp
+WatchApp -> TransformServer : request track file by id
+activate TransformServer
+TransformServer -> Configuration : get url by id
+TransformServer -> GpxSourceSite : get gpx data by url
+TransformServer -> TransformServer : transform gpx data to watch app track data
+TransformServer -> WatchApp : return track data
+deactivate TransformServer
+WatchApp -> WatchApp : start with returnd track data
+WatchApp -> User : show navigation
+deactivate WatchApp
+
+@enduml

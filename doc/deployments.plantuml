@@ -1,0 +1,39 @@
+@startuml
+
+title Wormnav-Online - Deployment Diagram (High Level)
+
+node "User's Personal Computer|Tablet| ..." as UserPC {
+    component "HTML 5 Web Browser"
+}
+
+node "Garmin Smartwatch" as SmartWatch {
+ component "Garmin Smartwatch Application" as GarminWatchApp<<connect IQ MonkeyC>>
+}
+
+node "User's Personal SmartPhone" as UserSmartphone {
+    component "Garmin Connect IQ App"
+}
+
+node "Public Webserver" as WebServer{
+ component "Browser Web Application" as BrowserApp<<Client Side JavaScript>>
+}
+
+cloud "Google Cloud Services" as Google {
+ component "Google OAuth 2.0" as OAuth
+ component "Google Drive" as Drive {
+  file wormnav.file
+ }
+}
+
+cloud "Anywhere from local disk or web" as anywhere {
+    file gpx.file
+}
+
+
+UserPC .up.> WebServer
+UserPC .down.> Google
+SmartWatch .down.> UserSmartphone
+UserSmartphone .down.> Google
+UserPC .down.> anywhere
+
+@enduml

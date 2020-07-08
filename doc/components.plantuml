@@ -1,0 +1,33 @@
+@startuml
+
+title Wormnav-Online - Component Diagram (High Level)
+
+package "wormnav-online-watchapp" {
+ component "Garmin Smartwatch Application" as GarminWatchApp<<connect IQ MonkeyC>>
+}
+
+package "wormnav-online-webapp" {
+ component "Browser Web Application" as BrowserApp<<Client Side JavaScript>>
+}
+
+cloud "Google Cloud Services" {
+ component "Google OAuth 2.0" as OAuth
+ component "Google Drive" as Drive {
+  file wormnav.file
+ }
+}
+
+cloud "Anywhere from local disk or web" {
+    file gpx.file
+}
+
+GarminWatchApp -down-> OAuth: login
+GarminWatchApp -down-> wormnav.file: read
+
+BrowserApp -up-> OAuth: login
+BrowserApp -up-> wormnav.file: write
+
+BrowserApp -down-> gpx.file: read
+BrowserApp --> BrowserApp: reduce gpx points 
+
+@enduml
